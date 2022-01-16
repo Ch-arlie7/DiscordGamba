@@ -177,9 +177,6 @@ async def gamba(ctx, title: str, *args):
     """
     if ctx.message.guild.name not in allowed_guilds:
         return
-    
-    print(args)
-    print(type(args))
     if len(args) >= 10 or len(args) <= 1:
         await ctx.message.add_reaction('🤡')
         return
