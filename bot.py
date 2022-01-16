@@ -24,6 +24,15 @@ guilds = {}
 allowed_guilds = ["Charlie's Server", "Swedistan"]
 
 def idMappedToAlphabet(n):
+    """To convert guild ID into a valid SQL table name
+
+    Args:
+        n (int): guild id
+
+    Returns:
+        str: str guild id
+    """    
+
     d = {'0': 'a',
          '1': 'b',
          '2': 'c',
