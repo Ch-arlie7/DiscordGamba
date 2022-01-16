@@ -21,7 +21,7 @@ PREFIX = '!'
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 guilds = {}
-allowed_guilds = ["Charlie's Server", "Swedistan"]
+allowed_guilds = ["Charlie's Server", "Swedistan", "Coconut Esports"]
 
 def idMappedToAlphabet(n):
     """To convert guild ID into a valid SQL table name
