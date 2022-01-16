@@ -74,7 +74,10 @@ async def leave(ctx):
     return
 
 @bot.command()
-async def flip(ctx, amount): 
+async def flip(ctx, amount):
+    """50/50 (xd) double or nothing.
+    Example: !flip 20
+    """     
     if ctx.message.guild.name not in allowed_guilds:
         return    
     try: 
@@ -100,6 +103,9 @@ async def flip(ctx, amount):
 
 @bot.command()
 async def tip(ctx, receiver, amount):
+    """Transfer points.
+    Example: !tip @Charlie 20
+    """    
     if ctx.message.guild.name not in allowed_guilds:
         return
     try:
@@ -128,6 +134,8 @@ async def tip(ctx, receiver, amount):
 
 @bot.command()
 async def points(ctx):
+    """Show current points.
+    """
     if ctx.message.guild.name not in allowed_guilds:
         return
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
@@ -139,6 +147,8 @@ async def points(ctx):
 
 @bot.command()
 async def leaderboard(ctx):
+    """Show current leaderboard of active degen gamblers.
+    """
     if ctx.message.guild.name not in allowed_guilds:
         return
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
@@ -162,7 +172,9 @@ async def leaderboard(ctx):
     
 @bot.command()
 async def gamba(ctx, title: str, *args):
-    '''Example: !gamba "can these morons figure it out?" yes no "definitely not" probably'''
+    """Create a new bet. Use quotation marks "" for multiple-word arguments.
+    Example: !gamba "Will I finally win a soloq game?" Yes No "Obviously not" Maybe
+    """
     if ctx.message.guild.name not in allowed_guilds:
         return
     
@@ -184,12 +196,15 @@ async def gamba(ctx, title: str, *args):
     await ctx.send(embed=embed)
     return
 
-#addbet
+
 #endbet
 #cancelbet
 
 @bot.command()
 async def bet(ctx, _id, choice, amount):
+    """Bet on an existing Gamba.
+    Example: !bet 1 a 20
+    """
     if ctx.message.guild.name not in allowed_guilds:
         return
     try:
@@ -223,7 +238,40 @@ async def bet(ctx, _id, choice, amount):
         await ctx.message.add_reaction('👎')
         return
 
-
+@bot.command()
+async def end(ctx, _id, result):
+    """Ends a Gamba. Only the Gamba's author has permission.
+    Example: !end 1 b
+    """
+    if ctx.message.guild.name not in allowed_guilds:
+        return
+    try:
+        _id = int(_id)
+        result = (str(result)).upper()
+    except: 
+        await ctx.message.add_reaction('❓')
+        return
+    e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
+    if _id not in e.gambas:
+        await ctx.message.add_reaction('❓')
+        return 
+    if ctx.message.author.id != e.gambas[_id].author:
+        await ctx.message.add_reaction('🔞')
+        return  
+    if result not in e.gambas[_id].options_alpha:
+        await ctx.message.add_reaction('❓')
+        return
+    data = e.closeBet(_id, result)
+    if not data:
+        await ctx.message.add_reaction('👎')
+        return
+    embed = discord.Embed(title='**Winners**',
+                          color=discord.Color.blue())
+    for i, v in enumerate(data['winners']):
+        embed.add_field(name=v, value=data['winnings'][i])     
+    await ctx.send(embed=embed)
+    return
+        
 
 
     

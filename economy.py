@@ -198,22 +198,33 @@ class Economy(SQLCommands):
             return False
         
     def closeBet(self, _id: int, result: str):
-        data = self.gambas[_id].getEndBetData(result)
-        print(data)
-        for i, discord_id in enumerate(data['discord_id']):
-            points = self.selectPoints(discord_id)
-            alloc_points = self.selectAllocPoints(discord_id)
-            winnings = data['winnings'][i]
-            bet_amount = data['amount'][i]
-            if winnings > 0:
-                points += winnings
-                alloc_points -= bet_amount
-            else:
-                alloc_points -= bet_amount
-            self.updatePoints(discord_id, points)
-            self.updateAllocPoints(discord_id, alloc_points)
-        self._ids.remove(_id)
-        del self.gambas[_id]
+        try:
+            data = self.gambas[_id].getEndBetData(result)
+            for i, discord_id in enumerate(data['discord_id']):
+                points = self.selectPoints(discord_id)
+                alloc_points = self.selectAllocPoints(discord_id)
+                winnings = data['winnings'][i]
+                bet_amount = data['amount'][i]
+                if winnings > 0:
+                    points += winnings
+                    alloc_points -= bet_amount
+                else:
+                    alloc_points -= bet_amount
+                self.updatePoints(discord_id, points)
+                self.updateAllocPoints(discord_id, alloc_points)    
+            self._ids.remove(_id)
+            del self.gambas[_id]
+
+            # create return value for discord bot output.
+            winners, winnings = [], []
+            for i, v in enumerate(data['winnings']):
+                if v > 0:
+                    winners.append(data['discord_name'][i])
+                    winnings.append(v)
+            return {'winnings' : winnings,
+                    'winners' : winners}
+        except:
+            return False
                     
     def cancelBet(self, _id: int):
         data = self.gambas[_id].getCancelBetData()
