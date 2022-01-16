@@ -188,6 +188,45 @@ async def gamba(ctx, title: str, *args):
 #endbet
 #cancelbet
 
+@bot.command()
+async def bet(ctx, _id, choice, amount):
+    if ctx.message.guild.name not in allowed_guilds:
+        return
+    try:
+        _id = int(_id)
+        amount = int(amount)
+        choice = (str(choice)).upper()
+    except: 
+        await ctx.message.add_reaction('❓')
+        return   
+    if amount <= 0:
+        await ctx.message.add_reaction('🤡')
+        return  
+    e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
+    if not e.sufficientBalance(ctx.message.author.id, amount):
+        await ctx.message.add_reaction('🚫')
+        await ctx.message.add_reaction('💵')
+        return
+    if _id not in e.gambas:
+        await ctx.message.add_reaction('❓')
+        return  
+    if ctx.message.author.id in e.gambas[_id].gamblers:
+        await ctx.message.add_reaction('🚫')
+        return
+    if choice not in e.gambas[_id].options_alpha:
+        await ctx.message.add_reaction('❓')
+        return 
+    if e.newBet(_id, ctx.message.author.id, ctx.message.author.name, choice, amount):
+        await ctx.message.add_reaction('👍')
+        return
+    else:
+        await ctx.message.add_reaction('👎')
+        return
+
+
+
+
+    
 
 bot.run(token)
 

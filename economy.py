@@ -183,15 +183,19 @@ class Economy(SQLCommands):
                 'options' : self.gambas[new_id].options,
                 'options_alpha' : self.gambas[new_id].options_alpha}
     
-    def addBet(self, _id: int, discord_id: int, discord_name: str, choice: str, amount: int):
-        self.setAsActive(discord_id)
-        self.gambas[_id].addBet(discord_id, discord_name, choice, amount)
-        
-        points = self.selectPoints(discord_id) - amount
-        alloc_points = self.selectAllocPoints(discord_id) + amount
+    def newBet(self, _id: int, discord_id: int, discord_name: str, choice: str, amount: int):
+        try:
+            self.setAsActive(discord_id)
+            self.gambas[_id].addBet(discord_id, discord_name, choice, amount)
+            
+            points = self.selectPoints(discord_id) - amount
+            alloc_points = self.selectAllocPoints(discord_id) + amount
 
-        self.updatePoints(discord_id, points)
-        self.updateAllocPoints(discord_id, alloc_points)
+            self.updatePoints(discord_id, points)
+            self.updateAllocPoints(discord_id, alloc_points)
+            return True
+        except:
+            return False
         
     def closeBet(self, _id: int, result: str):
         data = self.gambas[_id].getEndBetData(result)
