@@ -200,6 +200,10 @@ class Economy(SQLCommands):
     def closeBet(self, _id: int, result: str):
         try:
             data = self.gambas[_id].getEndBetData(result)
+            if len(data['discord_id']) == 0:
+                self._ids.remove(_id)
+                del self.gambas[_id]
+                return 1                                     #<--- Clumsy way to handle case where noone bets.
             for i, discord_id in enumerate(data['discord_id']):
                 points = self.selectPoints(discord_id)
                 alloc_points = self.selectAllocPoints(discord_id)
@@ -227,15 +231,23 @@ class Economy(SQLCommands):
             return False
                     
     def cancelBet(self, _id: int):
-        data = self.gambas[_id].getCancelBetData()
-        for i, discord_id in enumerate(data['discord_id']):
-            points = self.selectPoints(discord_id) + data['amount'][i]
-            alloc_points = self.selectAllocPoints(discord_id) - data['amount'][i]
-            
-            self.updatePoints(discord_id, points)
-            self.updateAllocPoints(discord_id, alloc_points)
-        self._ids.remove(_id)
-        del self.gambas[_id]
+        try:
+            data = self.gambas[_id].getCancelBetData()
+            if len(data['discord_id']) == 0:
+                self._ids.remove(_id)
+                del self.gambas[_id]
+                return True
+            for i, discord_id in enumerate(data['discord_id']):
+                points = self.selectPoints(discord_id) + data['amount'][i]
+                alloc_points = self.selectAllocPoints(discord_id) - data['amount'][i]
+                
+                self.updatePoints(discord_id, points)
+                self.updateAllocPoints(discord_id, alloc_points)
+            self._ids.remove(_id)
+            del self.gambas[_id]
+            return True
+        except:
+            return False
             
     def flip(self, discord_id: int, amount: int):  
         self.setAsActive(discord_id)
@@ -257,12 +269,8 @@ class Economy(SQLCommands):
             return True
         except:
             return False
-        
-   
-        
-        
-            
-    
+
+
 if __name__ == '__main__':
     e = Economy('root', 'password', '127.0.0.1', '3306', 'testdb', 'swedistan')
     e.createTable()

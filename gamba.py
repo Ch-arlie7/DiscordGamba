@@ -73,6 +73,8 @@ class Gamba(object):
                 count += bet[1]
             total_per_choice.append(count)
         total = sum(total_per_choice)
+        if total == 0:
+            total = 1
         percent_per_choice = [int(x/total * 100) for x in total_per_choice]
         
         return {'options' : self.options,

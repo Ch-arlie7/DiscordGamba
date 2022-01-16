@@ -135,6 +135,7 @@ async def tip(ctx, receiver, amount):
 @bot.command()
 async def points(ctx):
     """Show current points.
+    Example: !points
     """
     if ctx.message.guild.name not in allowed_guilds:
         return
@@ -148,6 +149,7 @@ async def points(ctx):
 @bot.command()
 async def leaderboard(ctx):
     """Show current leaderboard of active degen gamblers.
+    Example: !leaderboard
     """
     if ctx.message.guild.name not in allowed_guilds:
         return
@@ -180,6 +182,9 @@ async def gamba(ctx, title: str, *args):
     if len(args) >= 10 or len(args) <= 1:
         await ctx.message.add_reaction('🤡')
         return
+    args = [x[:25] for x in args]
+    title = title[:200]
+    
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
     details = e.createNewGamba(ctx.message.author.id, title, args)
 
@@ -194,7 +199,7 @@ async def gamba(ctx, title: str, *args):
     return
 
 
-#endbet
+
 #cancelbet
 
 @bot.command()
@@ -262,6 +267,9 @@ async def end(ctx, _id, result):
     if not data:
         await ctx.message.add_reaction('👎')
         return
+    if data == 1:
+        await ctx.message.add_reaction('👍')
+        return
     embed = discord.Embed(title='**Winners**',
                           color=discord.Color.blue())
     for i, v in enumerate(data['winners']):
@@ -270,8 +278,65 @@ async def end(ctx, _id, result):
     return
         
 
+@bot.command()
+async def cancel(ctx, _id):
+    """Cancels a Gamba, refunding bets. Only the Gamba's author has permission.
+    Example: !cancel 1
+    """
+    if ctx.message.guild.name not in allowed_guilds:
+        return
+    try:
+        _id = int(_id)
+    except:
+        await ctx.message.add_reaction('❓')
+        return 
+    e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
+    if ctx.message.author.id != e.gambas[_id].author:
+        await ctx.message.add_reaction('🔞')
+        return  
+    if e.cancelBet(_id):
+        await ctx.message.add_reaction('👍')
+        return
+    else:
+        await ctx.message.add_reaction('👎')
+        return
+        
+@bot.command()
+async def standings(ctx, _id):
+    """Show standings on an existing Gamba
+    Example: !standings 1
+    """
+    if ctx.message.guild.name not in allowed_guilds:
+        return
+    try:
+        _id = int(_id)
+    except:
+        await ctx.message.add_reaction('❓')
+        return 
+    e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
+    if _id not in e.gambas:
+        await ctx.message.add_reaction('❓')
+        return
+    data = e.gambas[_id].getStandings()
+    embed = discord.Embed(title='**{}**'.format(e.gambas[_id].title),
+                          color=discord.Color.red())
+    for i, v in enumerate(data['options']):
+        embed.add_field(name=v, value='{} - {}%'.format(data['totals'][i], data['percent'][i]), inline=False) 
+    await ctx.send(embed=embed)
+    return
 
-    
+@bot.command()
+async def gambas(ctx):
+    """Shows titles and IDs of active Gambas
+    Example: !gambas
+    """
+    e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
+    embed = discord.Embed(title='**Active Gambas**',
+                          color=discord.Color.red())
+    for _id in e.gambas:
+        embed.add_field(name=e.gambas[_id].title, value='ID: {}'.format(_id), inline=False)
+    await ctx.send(embed=embed)
+
 
 bot.run(token)
 
