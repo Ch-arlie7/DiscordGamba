@@ -141,9 +141,11 @@ async def points(ctx):
         return
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
     points = e.selectPoints(ctx.message.author.id)
-    embed = discord.Embed(title = '**{}**'.format(points),
-                          color=discord.Color.blue())   
-    await ctx.send(embed=embed)
+    # embed = discord.Embed(title = '**{}**'.format(points),
+    #                       color=discord.Color.blue())   
+    # await ctx.send(embed=embed)
+
+    await ctx.send('```\n{}```'.format(points))
     return
 
 @bot.command()
@@ -291,6 +293,9 @@ async def cancel(ctx, _id):
         await ctx.message.add_reaction('❓')
         return 
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
+    if _id not in e.gambas:
+        await ctx.message.add_reaction('❓')
+        return
     if ctx.message.author.id != e.gambas[_id].author:
         await ctx.message.add_reaction('🔞')
         return  
