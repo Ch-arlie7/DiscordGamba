@@ -172,7 +172,7 @@ async def leaderboard(ctx):
     
 @bot.command()
 async def gamba(ctx, title: str, *args):
-    """Create a new bet. Use quotation marks "" for multiple-word arguments.
+    """Create a new Gamba. Use quotation marks for multi-word arguments.
     Example: !gamba "Will I finally win a soloq game?" Yes No "Obviously not" Maybe
     """
     if ctx.message.guild.name not in allowed_guilds:
