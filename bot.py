@@ -120,6 +120,9 @@ async def tip(ctx, receiver, amount):
         await ctx.message.add_reaction('🚫')
         await ctx.message.add_reaction('💵')
         return
+    if ctx.message.author.id == receiver:
+        await ctx.message.add_reaction('🤡')
+        return
     if amount <= 0:
         await ctx.message.add_reaction('🤡')
         return
@@ -141,9 +144,6 @@ async def points(ctx):
         return
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
     points = e.selectPoints(ctx.message.author.id)
-    # embed = discord.Embed(title = '**{}**'.format(points),
-    #                       color=discord.Color.blue())   
-    # await ctx.send(embed=embed)
 
     await ctx.send('```\n{}```'.format(points))
     return
@@ -160,18 +160,12 @@ async def leaderboard(ctx):
     if not stats:
         await ctx.message.add_reaction('😦')
         return
-    embed = discord.Embed(title='**Leaderboard**',
-                          color=discord.Color.red())
-    f_name = stats['names'].pop(0)
-    f_points = stats['points'].pop(0)
 
-    leaderboard_string = ''
+    output = '```\nLeaderboard\n\n'
     for i, v in enumerate(stats['names']):
-        leaderboard_string += '{}. {}  -  {}\n'.format(i+2, v, stats['points'][i])
-    if leaderboard_string == '':
-        leaderboard_string = '______________________'
-    embed.add_field(name='1. {}  -  {}'.format(f_name, f_points), value=leaderboard_string, inline=False)
-    await ctx.send(embed=embed)
+        output += '{}. {} - {}\n'.format(i+1, v, stats['points'][i])
+    output += '```'
+    await ctx.send(output)
     return
     
 @bot.command()
@@ -190,14 +184,11 @@ async def gamba(ctx, title: str, *args):
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
     details = e.createNewGamba(ctx.message.author.id, title, args)
 
-    embed = discord.Embed(title='**{}**'.format(title),
-                          color = discord.Color.blue())
-    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)   
-
+    output = '```\n{}\n\n'.format(title)
     for i, v in enumerate(details['options_alpha']):
-        embed.add_field(name=v, value=details['options'][i], inline=False)
-    embed.set_footer(text='____________\nID = {}\nExample: !bet {} A 400'.format(details['id'], details['id']))
-    await ctx.send(embed=embed)
+        output += '{}. {}\n'.format(v, details['options'][i])
+    output += '\nID = {} | Author = {}\n```'.format(details['id'], ctx.message.author.name)
+    await ctx.send(output)
     return
 
 @bot.command()
@@ -265,14 +256,15 @@ async def end(ctx, _id, result):
     if not data:
         await ctx.message.add_reaction('👎')
         return
-    if data == 1:
+    if data == 1:                                   # Clumsy handling of 'no winner' case 
         await ctx.message.add_reaction('👍')
         return
-    embed = discord.Embed(title='**Winners**',
-                          color=discord.Color.blue())
+
+    output = '```\nWinners\n\n'
     for i, v in enumerate(data['winners']):
-        embed.add_field(name=v, value=data['winnings'][i])     
-    await ctx.send(embed=embed)
+        output += '{} : {}\n'.format(v, data['winnings'][i])
+    output += '```'
+    await ctx.send(output)
     return
         
 
@@ -319,11 +311,12 @@ async def standings(ctx, _id):
         await ctx.message.add_reaction('❓')
         return
     data = e.gambas[_id].getStandings()
-    embed = discord.Embed(title='**{}**'.format(e.gambas[_id].title),
-                          color=discord.Color.red())
+ 
+    output = '```\n{}\n\n'.format(e.gambas[_id].title)
     for i, v in enumerate(data['options']):
-        embed.add_field(name=v, value='{} - {}%'.format(data['totals'][i], data['percent'][i]), inline=False) 
-    await ctx.send(embed=embed)
+        output += '{}:   {} - {}%\n'.format(v, data['totals'][i], data['percent'][i])
+    output += '```'
+    await ctx.send(output)
     return
 
 @bot.command()
@@ -332,12 +325,13 @@ async def gambas(ctx):
     Example: !gambas
     """
     e = guilds[idMappedToAlphabet(ctx.message.guild.id)]
-    embed = discord.Embed(title='**Active Gambas**',
-                          color=discord.Color.red())
-    for _id in e.gambas:
-        embed.add_field(name=e.gambas[_id].title, value='ID: {}'.format(_id), inline=False)
-    await ctx.send(embed=embed)
 
+    output = '```\nActive Gambas\n\n'
+    for _id in e.gambas:
+        output += '{}. ID = {}\n'.format(e.gambas[_id].title, _id)
+    output += '```'
+    await ctx.send(output)
+    return
 
 bot.run(token)
 
