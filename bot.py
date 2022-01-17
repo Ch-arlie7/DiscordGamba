@@ -200,10 +200,6 @@ async def gamba(ctx, title: str, *args):
     await ctx.send(embed=embed)
     return
 
-
-
-#cancelbet
-
 @bot.command()
 async def bet(ctx, _id, choice, amount):
     """Bet on an existing Gamba.
