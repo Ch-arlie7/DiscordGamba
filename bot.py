@@ -15,24 +15,17 @@ host = os.getenv('DB_HOST')
 port = os.getenv('DB_PORT')
 database = os.getenv('DB_DATABASE')
 admin_id = int(os.getenv('ADMIN_ID'))
+stimmy_amount_per_day = int(os.getenv('STIMMY_AMOUNT'))
 
-stimmy_amount_per_day = 10
 PREFIX = '!'
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 guilds = {}
 allowed_guilds = ["Charlie's Server", "Swedistan", "Coconut Esports"]
 
-def idMappedToAlphabet(n):
+def idMappedToAlphabet(n: int)-> str:
     """To convert guild ID into a valid SQL table name
-
-    Args:
-        n (int): guild id
-
-    Returns:
-        str: str guild id
     """    
-
     d = {'0': 'a',
          '1': 'b',
          '2': 'c',
@@ -109,7 +102,7 @@ async def tip(ctx, receiver, amount):
     if ctx.message.guild.name not in allowed_guilds:
         return
     try:
-        receiver = int(receiver[3:-1])
+        receiver = int(''.join([x for x in receiver if x.isnumeric()]))
         amount = int(amount)
     except:
         await ctx.message.add_reaction('❓')

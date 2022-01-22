@@ -8,31 +8,37 @@ class SQLCommands(object):
     def __init__(self, user: str, password: str, host: str, port: str, database: str, table: str):
         """
         Class to interact with MQSql.
-
-        Parameters
-        ----------
-        user : str
-        password : str
-        host : str
-        port : str
-        database : str
-        table : str
         """
-        self.mydb = mysql.connector.connect(user=user, 
-                                password=password,
-                                host = host,
-                                port = port,
-                                database = database,                              
-                                auth_plugin = 'mysql_native_password',
-                                use_pure=True)
-        self.table = table
-        self.mycursor = self.mydb.cursor()
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
+        self.database = database
+        self.table = table       
+        self.mydb = self.initDB()
+
+    def initDB(self):
+        return mysql.connector.connect(user=self.user,
+                                    password = self.password,
+                                    host = self.host,
+                                    port = self.port,
+                                    database = self.database,
+                                    auth_plugin = 'mysql_native_password',
+                                    use_pure = True)
+
+    def myCursor(self):
+        try:
+            self.mydb.cursor()
+        except mysql.connector.Error as err:
+            self.mydb = self.initDB()
+        return self.mydb.cursor()
+
     def dropTable(self):
         """
         Drops table (self.table) if it exists.
         """
         try:
-            self.mycursor.execute("DROP TABLE {};".format(self.table))
+            self.myCursor().execute("DROP TABLE {};".format(self.table))
             self.mydb.commit()
         except mysql.connector.Error as err:
             print("Error: {}".format(err))
@@ -42,9 +48,9 @@ class SQLCommands(object):
         Creates table (self.table) if it doesn't exist.
         """
         try:
-            self.mycursor.execute("CREATE TABLE {} (id BIGINT PRIMARY KEY, "
+            self.myCursor().execute("CREATE TABLE {} (id BIGINT PRIMARY KEY, "
                                                 "username VARCHAR(40), "
-                                                "points INT DEFAULT 100, " 
+                                                "points INT DEFAULT 1000, " 
                                                 "alloc_points INT DEFAULT 0, "
                                                 "start_date DATE, "
                                                 "last_stimmy DATE, "
@@ -55,16 +61,11 @@ class SQLCommands(object):
     def insertRow(self, discord_id: int, discord_name: str, date: str):
         """
         Inserts row for discord user if ID not already in database.
-
-        Parameters
-        ----------
-        discord_id : int
-        discord_name : str
         date : str
             format: "2021-01-03"
         """     
         data = (discord_id, discord_name, date, date)
-        self.mycursor.execute("INSERT IGNORE INTO {} (id, username, start_date, last_stimmy) VALUES (%s, %s, %s, %s);".format(self.table), data)
+        self.myCursor().execute("INSERT IGNORE INTO {} (id, username, start_date, last_stimmy) VALUES (%s, %s, %s, %s);".format(self.table), data)
         self.mydb.commit()
         
     def showTable(self):
@@ -77,32 +78,32 @@ class SQLCommands(object):
         print(table)
     
     def selectPoints(self, discord_id: int):
-        self.mycursor.execute("SELECT points FROM {} WHERE id = %s;".format(self.table), (discord_id,))
-        return self.mycursor.fetchone()[0]
+        self.myCursor().execute("SELECT points FROM {} WHERE id = %s;".format(self.table), (discord_id,))
+        return self.myCursor().fetchone()[0]
     
     def selectAllocPoints(self, discord_id: int):
-        self.mycursor.execute("SELECT alloc_points FROM {} WHERE id = %s;".format(self.table), (discord_id,))
-        return self.mycursor.fetchone()[0]
+        self.myCursor().execute("SELECT alloc_points FROM {} WHERE id = %s;".format(self.table), (discord_id,))
+        return self.myCursor().fetchone()[0]
     
     def selectName(self, discord_id: int):
-        self.mycursor.execute("SELECT username FROM {} WHERE id = %s;".format(self.table), (discord_id,))
-        return self.mycursor.fetchone()[0]
+        self.myCursor().execute("SELECT username FROM {} WHERE id = %s;".format(self.table), (discord_id,))
+        return self.myCursor().fetchone()[0]
       
     def updatePoints(self, discord_id: int, new_value: int):
-        self.mycursor.execute("UPDATE {} SET points = %s WHERE id = %s;".format(self.table), (new_value, discord_id))
+        self.myCursor().execute("UPDATE {} SET points = %s WHERE id = %s;".format(self.table), (new_value, discord_id))
         self.mydb.commit()
         
     def updateAllocPoints(self, discord_id: int, new_value: int):
-        self.mycursor.execute("UPDATE {} SET alloc_points = %s WHERE id = %s;".format(self.table), (new_value, discord_id))
+        self.myCursor().execute("UPDATE {} SET alloc_points = %s WHERE id = %s;".format(self.table), (new_value, discord_id))
         self.mydb.commit()
 
     def updateName(self, discord_id: int, new_value: str):
-        self.mycursor.execute("UPDATE {} SET username = %s WHERE id = %s;".format(self.table), (new_value, discord_id))
+        self.myCursor().execute("UPDATE {} SET username = %s WHERE id = %s;".format(self.table), (new_value, discord_id))
         self.mydb.commit()
 
 
     def setAsActive(self, discord_id: int):
-        self.mycursor.execute("UPDATE {} SET active = 1 where id = %s;".format(self.table), (discord_id,))
+        self.myCursor().execute("UPDATE {} SET active = 1 where id = %s;".format(self.table), (discord_id,))
         self.mydb.commit()
         
     def sufficientBalance(self, discord_id: int, amount: int):
@@ -113,11 +114,11 @@ class SQLCommands(object):
         """
         Moves alloc_points back into points column and then resets alloc_points back to 0
         """
-        self.mycursor.execute("SELECT points, alloc_points, id FROM {}".format(self.table))
-        values = self.mycursor.fetchall()
+        self.myCursor().execute("SELECT points, alloc_points, id FROM {}".format(self.table))
+        values = self.myCursor().fetchall()
         refunded = [(x[0] + x[1], 0, x[2]) for x in values]
         for _tuple in refunded:
-            self.mycursor.execute("UPDATE {} SET points = %s, alloc_points = %s WHERE id = %s".format(self.table), (_tuple[0], _tuple[1], _tuple[2]))
+            self.myCursor().execute("UPDATE {} SET points = %s, alloc_points = %s WHERE id = %s".format(self.table), (_tuple[0], _tuple[1], _tuple[2]))
             self.mydb.commit()
             
     def applyStimmy(self, amount_per_day: int):
@@ -125,8 +126,8 @@ class SQLCommands(object):
         points += #days since stimmy * amount per day
         last_stimmy = today's date
         """       
-        self.mycursor.execute("SELECT id, points, last_stimmy FROM {}".format(self.table))
-        values = self.mycursor.fetchall()
+        self.myCursor().execute("SELECT id, points, last_stimmy FROM {}".format(self.table))
+        values = self.myCursor().fetchall()
         today = datetime.today()
         today = today.date()             
         for _tuple in values:
@@ -138,7 +139,7 @@ class SQLCommands(object):
             points += days_since_stimmy * amount_per_day
             last_stimmy = today.strftime('%Y-%m-%d')
             
-            self.mycursor.execute("UPDATE {} SET points = %s, last_stimmy = %s where id = %s".format(self.table), (points, last_stimmy, _id))
+            self.myCursor().execute("UPDATE {} SET points = %s, last_stimmy = %s where id = %s".format(self.table), (points, last_stimmy, _id))
             self.mydb.commit()
             
     def isValidDiscordID(self, discord_id: int):
@@ -147,17 +148,16 @@ class SQLCommands(object):
         -------
         bool
             True if discord_id exists in database, else False.
-
         """
-        self.mycursor.execute("SELECT id FROM {}".format(self.table))
-        for id_tuple in self.mycursor.fetchall():
+        self.myCursor().execute("SELECT id FROM {}".format(self.table))
+        for id_tuple in self.myCursor().fetchall():
             if id_tuple[0] == discord_id:
                 return True
         return False
     
     def leaderboardStats(self):
-        self.mycursor.execute("SELECT points, username FROM {} WHERE active != 0".format(self.table))
-        result = self.mycursor.fetchall()
+        self.myCursor().execute("SELECT points, username FROM {} WHERE active != 0".format(self.table))
+        result = self.myCursor().fetchall()
         if not result:
             return False
         result = sorted(result, reverse=True)
@@ -284,10 +284,10 @@ if __name__ == '__main__':
     e.createNewGamba(123, "Will this work?", ("yes", "no", "maybe"))
 
     
-    e.addBet(1, 12, 'Evan', 'A', 15)
-    e.addBet(1, 27, 'Glen', 'B', 20)
-    e.addBet(1, 123, 'Charlie', 'C', 12)
-    e.addBet(1, 132, 'Joe', 'A', 99)
+    e.newBet(1, 12, 'Evan', 'A', 15)
+    e.newBet(1, 27, 'Glen', 'B', 20)
+    e.newBet(1, 123, 'Charlie', 'C', 12)
+    e.newBet(1, 132, 'Joe', 'A', 99)
     
     print(e.gambas)
     print(e._ids)
