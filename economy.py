@@ -8,25 +8,26 @@ class SQLCommands(object):
     def __init__(self, user: str, password: str, host: str, port: str, database: str, table: str):
         """
         Class to interact with MQSql.
-
-        Parameters
-        ----------
-        user : str
-        password : str
-        host : str
-        port : str
-        database : str
-        table : str
         """
-        self.mydb = mysql.connector.connect(user=user, 
-                                password=password,
-                                host = host,
-                                port = port,
-                                database = database,                              
-                                auth_plugin = 'mysql_native_password',
-                                use_pure=True)
-        self.table = table
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
+        self.database = database
+        self.table = table       
+        self.mydb = self.initDB()
         self.mycursor = self.mydb.cursor()
+
+    def initDB(self):
+        return mysql.connector.connect(user=self.user,
+                                    password = self.password,
+                                    host = self.host,
+                                    port = self.port,
+                                    database = self.database,
+                                    auth_plugin = 'mysql_native_password',
+                                    use_pure = True)
+
+
     def dropTable(self):
         """
         Drops table (self.table) if it exists.
@@ -44,7 +45,7 @@ class SQLCommands(object):
         try:
             self.mycursor.execute("CREATE TABLE {} (id BIGINT PRIMARY KEY, "
                                                 "username VARCHAR(40), "
-                                                "points INT DEFAULT 100, " 
+                                                "points INT DEFAULT 1000, " 
                                                 "alloc_points INT DEFAULT 0, "
                                                 "start_date DATE, "
                                                 "last_stimmy DATE, "
@@ -55,11 +56,6 @@ class SQLCommands(object):
     def insertRow(self, discord_id: int, discord_name: str, date: str):
         """
         Inserts row for discord user if ID not already in database.
-
-        Parameters
-        ----------
-        discord_id : int
-        discord_name : str
         date : str
             format: "2021-01-03"
         """     
@@ -147,7 +143,6 @@ class SQLCommands(object):
         -------
         bool
             True if discord_id exists in database, else False.
-
         """
         self.mycursor.execute("SELECT id FROM {}".format(self.table))
         for id_tuple in self.mycursor.fetchall():
@@ -284,10 +279,10 @@ if __name__ == '__main__':
     e.createNewGamba(123, "Will this work?", ("yes", "no", "maybe"))
 
     
-    e.addBet(1, 12, 'Evan', 'A', 15)
-    e.addBet(1, 27, 'Glen', 'B', 20)
-    e.addBet(1, 123, 'Charlie', 'C', 12)
-    e.addBet(1, 132, 'Joe', 'A', 99)
+    e.newBet(1, 12, 'Evan', 'A', 15)
+    e.newBet(1, 27, 'Glen', 'B', 20)
+    e.newBet(1, 123, 'Charlie', 'C', 12)
+    e.newBet(1, 132, 'Joe', 'A', 99)
     
     print(e.gambas)
     print(e._ids)
