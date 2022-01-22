@@ -31,6 +31,7 @@ class SQLCommands(object):
     def dropTable(self):
         """
         Drops table (self.table) if it exists.
+        
         """
         try:
             self.mycursor.execute("DROP TABLE {};".format(self.table))
