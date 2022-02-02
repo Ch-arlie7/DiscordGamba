@@ -1,0 +1,12 @@
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\FrameworkLib.dll
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\FrameworkLib.pdb
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\HtmlAgilityPack.dll
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\HtmlAgilityPack.pdb
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\HtmlAgilityPack.xml
+C:\REPOSITORY\DiscordGamba\FrameworkLib\obj\Release\FrameworkLib.csproj.AssemblyReference.cache
+C:\REPOSITORY\DiscordGamba\FrameworkLib\obj\Release\FrameworkLib.csproj.CoreCompileInputs.cache
+C:\REPOSITORY\DiscordGamba\FrameworkLib\obj\Release\FrameworkLib.csproj.CopyComplete
+C:\REPOSITORY\DiscordGamba\FrameworkLib\obj\Release\FrameworkLib.dll
+C:\REPOSITORY\DiscordGamba\FrameworkLib\obj\Release\FrameworkLib.pdb
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\Newtonsoft.Json.dll
+C:\REPOSITORY\DiscordGamba\FrameworkLib\bin\Release\Newtonsoft.Json.xml

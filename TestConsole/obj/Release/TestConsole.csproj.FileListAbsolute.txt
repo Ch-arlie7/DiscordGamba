@@ -1,0 +1,15 @@
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\TestConsole.exe.config
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\TestConsole.exe
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\TestConsole.pdb
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\FrameworkLib.dll
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\FrameworkLib.pdb
+C:\REPOSITORY\DiscordGamba\TestConsole\obj\Release\TestConsole.csproj.AssemblyReference.cache
+C:\REPOSITORY\DiscordGamba\TestConsole\obj\Release\TestConsole.csproj.CoreCompileInputs.cache
+C:\REPOSITORY\DiscordGamba\TestConsole\obj\Release\TestConsole.csproj.CopyComplete
+C:\REPOSITORY\DiscordGamba\TestConsole\obj\Release\TestConsole.exe
+C:\REPOSITORY\DiscordGamba\TestConsole\obj\Release\TestConsole.pdb
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\HtmlAgilityPack.dll
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\Newtonsoft.Json.dll
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\HtmlAgilityPack.pdb
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\HtmlAgilityPack.xml
+C:\REPOSITORY\DiscordGamba\TestConsole\bin\Release\Newtonsoft.Json.xml
