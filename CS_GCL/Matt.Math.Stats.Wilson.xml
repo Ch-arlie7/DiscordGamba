@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Matt.Math.Stats.Wilson</name>
+    </assembly>
+    <members>
+        <member name="T:Matt.Math.Stats.Wilson.WilsonScore">
+            <summary>
+            Computes the lower bound of the Wilson score interval, which estimates the "actual" score of Bernoulli
+            tests, were they to continue forever.
+            </summary>
+            <remarks>
+            https://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+            https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval
+            </remarks>
+        </member>
+        <member name="M:Matt.Math.Stats.Wilson.WilsonScore.CalculateWithConfidence(System.UInt32,System.UInt32,System.Double)">
+            <summary>
+            Computes the lower bound of the Wilson score interval, which estimates the "actual" score of Bernoulli
+            tests, were they to continue forever.
+            </summary>
+            <param name="numberOfPositiveScores">The number of successful Bernoulli tests.</param>
+            <param name="totalScores">The total number of Bernoulli tests.</param>
+            <param name="confidence">Desired confidence (0-1); higher confidence results in lower score.</param>
+        </member>
+        <member name="M:Matt.Math.Stats.Wilson.WilsonScore.CalculateWithZScore(System.UInt32,System.UInt32,System.Double)">
+            <summary>
+            Computes the lower bound of the Wilson score interval, which estimates the "actual" score of Bernoulli
+            tests, were they to continue forever.
+            </summary>
+            <param name="numberOfPositiveScores">The number of successful Bernoulli tests.</param>
+            <param name="totalScores">The total number of Bernoulli tests.</param>
+            <param name="zScore">The z-score of the desired confidence range.</param>
+        </member>
+    </members>
+</doc>

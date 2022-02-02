@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections;
-
+using System.Text.RegularExpressions;
 
 namespace GambaExtrasNamespace
 {
@@ -73,7 +73,7 @@ namespace GambaExtrasNamespace
             if(subnode==null)
                 return "";
             if(att_val=="")
-                return subnode.InnerText;
+                return Regex.Replace(subnode.InnerText,"[\\t\\n\\r]","");
             else
             {
                 return subnode.GetAttributeValue(att_val, "");
