@@ -37,7 +37,7 @@ else:
     pprint(a)
 #GambaExtras.HelloWorld()
 
-si = SimpleInterface("C:\\REPOSITORY\\DiscordGamba\\SHIT\\8thDecember21_3_modified_33_1700_2xHsDuplicateInClassAndLowSkillInClass_General.dat")
+si = SimpleInterface("C:\\REPOSITORY\\DiscordGamba\\SHIT\\comb_19thJaunary22_Patch122_8thDecember21_3NEW_modified_26_500_General.dat")
 print(si.GetChampionWinrate("kaisa"))
 print(si.GetChampionWinrate("kaisa",True))
 
