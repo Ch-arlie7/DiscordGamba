@@ -13,9 +13,9 @@ import clr
 #rt = get_coreclr(r"C:\Test\MyApp\out_path\MyApp.runtimeconfig.json")
 #set_runtime(rt)
 
-clr.FindAssembly(".\\CS_GCL\\CS_GCL")
-TL = clr.AddReference(".\\CS_GCL\\CS_GCL")
-TL2 = clr.AddReference('FrameworkLib')
+clr.FindAssembly(".\\SHIT\\CS_GCL\\CS_GCL")
+TL = clr.AddReference(".\\SHIT\\CS_GCL\\CS_GCL")
+TL2 = clr.AddReference('.\\SHIT\\FrameworkLib')
 
 print (TL)
 print(TL.Location)
@@ -37,7 +37,7 @@ else:
     pprint(a)
 #GambaExtras.HelloWorld()
 
-si = SimpleInterface("C:\\REPOSITORY\\DiscordGamba\\8thDecember21_3_modified_33_1700_2xHsDuplicateInClassAndLowSkillInClass_General.dat")
+si = SimpleInterface("C:\\REPOSITORY\\DiscordGamba\\SHIT\\8thDecember21_3_modified_33_1700_2xHsDuplicateInClassAndLowSkillInClass_General.dat")
 print(si.GetChampionWinrate("kaisa"))
 print(si.GetChampionWinrate("kaisa",True))
 
