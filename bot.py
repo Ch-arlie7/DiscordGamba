@@ -6,6 +6,8 @@ import sys
 from datetime import datetime
 from economy import Economy
 import time
+import urllib.request
+import re
 
 
     #### MAYBE ALTER GAMBA TO MAKE IT CANCEL IF NO WINNERS? WOULD TAKE REWRITE OF THE FUNCTION. 
@@ -58,13 +60,13 @@ async def on_member_join(member):
     print('Member just joined.\nID: {}\nName: {}'.format(member.id, member.name))
 
 
-# @bot.command()
-# async def leave(ctx):
-#     if ctx.message.author.id == admin_id:   
-#         await ctx.message.add_reaction('👌')
-#         sys.exit()
-#     await ctx.message.add_reaction('⛔')
-#     return
+@bot.command()
+async def leave(ctx):
+    if ctx.message.author.id == admin_id:   
+        await ctx.message.add_reaction('👌')
+        sys.exit()
+    await ctx.message.add_reaction('⛔')
+    return
 
 @bot.command()
 async def points(ctx):
@@ -267,6 +269,51 @@ async def gambas(ctx):
     output += '\n```'
     await ctx.send(output)
     return
+
+@bot.command()
+async def stats(ctx, gambler = None):
+    """Shows statistics, self by default, optional argument for others
+    Examples: !stats
+              !stats @Charlie
+    """
+    e = guilds[guild_id_adjusted(ctx.message.guild.id)]
+    if gambler:
+        try:
+            gambler = int(''.join([x for x in gambler if x.isnumeric()]))
+        except:
+            await ctx.message.add_reaction('❓')
+            return
+        if not e.is_valid_discord_id(gambler):
+            await ctx.message.add_reaction('❓')
+            return  
+    else:
+        gambler = ctx.message.author.id
+
+    username, flip_count, flip_wins, flip_winnings, gamba_count, gamba_wins, gamba_winnings = e.select_row_by_id('username, flip_count, flip_wins, flip_winnings, gamba_count, gamba_wins, gamba_winnings', gambler)   
+    try:
+        flip_wr = int((flip_wins / flip_count) * 100)
+    except:
+        flip_wr = 0
+    try:
+        gamba_wr = int((gamba_wins / gamba_count) * 100)
+    except:
+        gamba_wr = 0
+    output = "\n```{}'s stats\nFlips -> | Count: {} | Winrate: {}% | Winnings: {}\nGambas -> | Count: {} | Winrate: {}% | Winnings: {}\n```".format(username, flip_count, flip_wr, flip_winnings, 
+                                                                                                                                        gamba_count, gamba_wr, gamba_winnings)
+    await ctx.send(output)
+    return
+
+@bot.command()
+async def yt(ctx, *args):
+    ''' Returns top link for search terms.
+    Example: !yt chillstep mix 2022'''
+    query = '+'.join(args)
+    html = urllib.request.urlopen("https://www.youtube.com/results?search_query={}".format(query))
+    video_id = re.findall(r"watch\?v=(\S{11})", html.read().decode())[0]
+    await ctx.send("https://www.youtube.com/watch?v={}".format(video_id))
+    return
+
+
 
 if __name__ == '__main__':
     bot.run(token)

@@ -92,19 +92,15 @@ class Economy(SQLBase):
             userID = row[0]
             userName = row[1]
             player_bet_amount = sum(row[2:])
-            w = False
             for i, option_bet_amount in enumerate(row[2:]):
                 if alphabet[i] == result and option_bet_amount != 0:
                     winners.append(userID)
                     winners_bet_amounts.append(option_bet_amount)
-                    winner_names.append(userName)
-                    w = True
-            
+                    winner_names.append(userName)     
             alloc_points, gamba_count, gamba_winnings = self.select_row_by_id('alloc_points, gamba_count, gamba_winnings', userID)
             gamba_count += 1
             alloc_points -= player_bet_amount
-            if not w:
-                gamba_winnings -= player_bet_amount
+            gamba_winnings -= player_bet_amount
             self.update_row_by_id(('alloc_points', 'gamba_count', 'gamba_winnings'), (alloc_points, gamba_count, gamba_winnings), userID)
             total_bet_amount += player_bet_amount
 
